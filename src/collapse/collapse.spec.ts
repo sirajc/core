@@ -17,6 +17,10 @@ function getCollapsibleContent(element: Element): Element {
   return element.querySelector('.collapse');
 }
 
+function hasStyle(element: Element, str: string): Boolean {
+  return new RegExp(`(^|\\s)${str}(\\s|$)`).test(element.getAttribute('style'));
+}
+
 describe('ngb-collapse', () => {
 
   const html = `<div [ngb-collapse]="collapsed">Some content</div>`;
@@ -63,6 +67,20 @@ describe('ngb-collapse', () => {
          fixture.debugElement.componentInstance.collapsed = false;
          fixture.detectChanges();
          expect(content).toHaveCssClass('in');
+       });
+     }));
+
+  it('should have height style of 0px', injectAsync([TestComponentBuilder], (tcb) => {
+       return tcb.overrideTemplate(TestComponent, html).createAsync(TestComponent).then((fixture) => {
+         const tc = fixture.debugElement.componentInstance;
+         tc.collapsed = true;
+         fixture.detectChanges();
+
+         const compiled = fixture.debugElement.nativeElement;
+
+         let content = getCollapsibleContent(compiled);
+
+         expect(hasStyle(content, 'height: 0px;')).toBe(true);
        });
      }));
 });
